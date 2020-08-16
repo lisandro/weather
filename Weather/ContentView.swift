@@ -11,11 +11,16 @@ struct ContentView: View {
     @ObservedObject private var weatherVM = WeatherViewModel()
     
     var body: some View {
-        Text("\(self.weatherVM.temperature)")
-            .padding()
-            .onAppear(perform: {
+        VStack {
+            TextField("Search", text: $weatherVM.city, onEditingChanged: { _ in }) {
                 self.weatherVM.fetchWeather()
-            })
+            }
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            Spacer()
+            Text("\(self.weatherVM.temperature)")
+            Spacer()
+            Text(weatherVM.message)
+        }.padding()
     }
 }
 
