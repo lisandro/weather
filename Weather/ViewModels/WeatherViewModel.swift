@@ -7,31 +7,46 @@
 
 import Foundation
 
+enum LoadingState {
+    case loading
+    case success
+    case failed
+    case none
+}
+
 class WeatherViewModel: ObservableObject {
-    @Published private var weather: Weather?
+    @Published private var weather: WeatherData?
     @Published var city: String = ""
-    
     @Published var message: String = ""
+    @Published var loadingState: LoadingState = .none
     
     var temperature: Double {
         weather?.temp ?? 0.0
     }
     
+    var humidity: Double {
+        weather?.humidity ?? 0.0
+    }
+    
     func fetchWeather() {
         guard let city = city.escaped() else {
-            fatalError("URL is invalid!")
+            DispatchQueue.main.async {
+                self.message = "City is incorrect"
+            }
+            return
         }
+        self.loadingState = .loading
         WeatherService().getWeather(city: city) { result in
             switch result {
             case .success(let weather):
-                print("ok")
                 DispatchQueue.main.async {
                     self.weather = weather
+                    self.loadingState = .success
                 }
             case .failure:
                 DispatchQueue.main.async {
                     self.message = "Unable to find the weather"
-                    self.weather = nil
+                    self.loadingState = .failed
                 }
             }
         }
