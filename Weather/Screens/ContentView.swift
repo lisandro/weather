@@ -24,7 +24,7 @@ struct ContentView: View {
             if self.weatherVM.loadingState == .loading {
                 LoadingView()
             } else if self.weatherVM.loadingState == .success {
-                WeatherView(temperature: self.weatherVM.temperature, humidity: self.weatherVM.humidity)
+                WeatherView(weatherVM: self.weatherVM)
             } else if self.weatherVM.loadingState == .failed {
                 ErrorView(message: weatherVM.message)
             }
